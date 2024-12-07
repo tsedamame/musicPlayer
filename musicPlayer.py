@@ -12,7 +12,6 @@ from customtkinter import CTkImage
 import requests
 from bs4 import BeautifulSoup
 
-
 class MusicPlayer:
     def __init__(self):
         self.window = ctk.CTk()
@@ -122,7 +121,7 @@ class MusicPlayer:
         )
         self.titleLabel.pack(pady = 30)
         
-        # Add Song button - positioned at top right
+        #Song button 
         self.selectButton = ctk.CTkButton(
             self.window,
             text = "+ Add Song",
@@ -134,11 +133,11 @@ class MusicPlayer:
         )
         self.selectButton.place(relx = 0.97, rely = 0.02, anchor = "ne")
         
-        # Add a frame for the song info and progress
+        #frame for the song info and progress
         self.songFrame = ctk.CTkFrame(self.mainContent, fg_color="transparent")
         self.songFrame.pack(fill = "x", pady = (20, 0))
         
-        # Current song label with better styling
+        # Current song label
         self.currentSongLabel = ctk.CTkLabel(
             self.songFrame,
             text = "No song selected",
@@ -147,13 +146,11 @@ class MusicPlayer:
         )
         self.currentSongLabel.pack(pady = (0, 5))
 
-        # Create frame for navigation buttons and volume controls
         self.navControls = ctk.CTkFrame(self.mainContent, fg_color = "transparent")
         self.navControls.pack(fill = "x", pady = 10)
 
-        # Center the buttons using grid layout
-        self.navControls.grid_columnconfigure(0, weight=1)  # Add padding to the left
-        self.navControls.grid_columnconfigure(6, weight=1)  # Add padding to the right
+        self.navControls.grid_columnconfigure(0, weight=1)  
+        self.navControls.grid_columnconfigure(6, weight=1)  
 
         # Shuffle button
         self.shuffleButton = ctk.CTkButton(
@@ -212,14 +209,14 @@ class MusicPlayer:
         )
         self.nextButton.grid(row = 0, column = 4, padx = 5)
             
-        # Volume controls added beside navigation
+        # Volume controls
         self.volumeFrame = ctk.CTkFrame(self.mainContent, fg_color = "transparent")
         self.volumeFrame.pack(fill = "x", pady = (10, 0))
 
         # Volume label
         self.volumeLabel = ctk.CTkButton(
             self.volumeFrame, 
-            image = self.volumeIcon,  # Use volume icon initially
+            image = self.volumeIcon,  
             width = 30,
             fg_color = "transparent",
             height = 30,
@@ -239,12 +236,9 @@ class MusicPlayer:
         self.volumeSlider.set(1)
         self.volumeSlider.pack(side="left", fill="x", padx=(0, 0))
 
-        # Initialize volume
         self.volume = 1  # Default volume
-
-        # Initialize progress tracking variables
         
-        # Initialize progress bar with determinate mode
+        #  progress bar with determinate mode
         self.progressBar = ctk.CTkProgressBar(self.songFrame)
         self.progressBar.pack(fill = "x", pady = (0, 0))
         self.progressBar.configure(mode="determinate")
@@ -258,7 +252,7 @@ class MusicPlayer:
         self.totalTime = ctk.CTkLabel(self.timeFrame, text= "0:00")
         self.totalTime.pack(side="right")
         
-        # Initialize current song index and state variables
+        # current song index and state variables
         self.songLength = 0
         self.startTime = 0
         self.updateId = None
@@ -273,13 +267,13 @@ class MusicPlayer:
         self.progressBar.bind("<Button-1>", self.seekSong)
 
         self.lyricsFrame = ctk.CTkFrame(self.mainContent, fg_color="#2E2E2E", border_color="lightgray", border_width=2)
-        self.lyricsFrame.pack_forget()  # Initially hide the lyrics frame
+        self.lyricsFrame.pack_forget() 
 
-        # Create a scrollable frame for the lyrics
+        # scrollable frame for the lyrics
         self.lyricsScrollableFrame = ctk.CTkScrollableFrame(self.lyricsFrame, fg_color="#2E2E2E")
         self.lyricsScrollableFrame.pack(fill="both", expand=True, padx=0, pady=0) 
 
-        # Add a label to display the lyrics
+        # label to display the lyrics
         self.lyricsLabel = ctk.CTkLabel(
             self.lyricsScrollableFrame,
             text = "",
@@ -289,7 +283,7 @@ class MusicPlayer:
             anchor = "w"
         )
         self.lyricsLabel.pack(pady=0, fill="x")
-        # Add a button outside the lyrics frame to toggle visibility
+
         self.toggleLyricsButton = ctk.CTkButton(
             self.mainContent,
             text = "Show Lyrics",
@@ -298,7 +292,6 @@ class MusicPlayer:
         )
         self.toggleLyricsButton.pack(pady=(20, 0))
 
-        # Initialize lyrics dictionary from the imported module
 
     def addToPlaylist(self, songPath):
         """Add a song to the playlist"""
@@ -312,7 +305,7 @@ class MusicPlayer:
             songFrame.songPath = songPath  # Store the songPath in the frame
             self.songFrames.append(songFrame)  # Store reference to the song frame
 
-            # Add play button
+            #play button
             playBtn = ctk.CTkButton(
                 songFrame,
                 text = "▶",
@@ -322,7 +315,7 @@ class MusicPlayer:
             )
             playBtn.pack(side = "left", padx = (0, 5))
 
-            # Add song label
+            # song label
             songLabel = ctk.CTkLabel(
                 songFrame,
                 text=(songName if len(songName) <= 25 else songName[:22] + '...'),
@@ -330,7 +323,7 @@ class MusicPlayer:
             )
             songLabel.pack(side="left", fill="x", expand=True)
 
-            # Add delete button with image
+            # delete button
             deleteBtn = ctk.CTkButton(
                 songFrame,
                 image = self.deleteIcon,  
@@ -347,13 +340,6 @@ class MusicPlayer:
     def filterPlaylist(self, *args):
         """Filter playlist based on search text."""
         search_text = self.searchVar.get().lower()
-        
-        # Update search bar placeholder visibility
-        if not search_text:  # If the search bar is empty
-            self.searchEntry.configure(placeholder_text="Search songs...")
-        else:  # If there's input, clear the placeholder
-            self.searchEntry.configure(placeholder_text="")
-        
         # Hide all frames first
         for frame in self.songFrames:
             frame.pack_forget()
@@ -366,7 +352,6 @@ class MusicPlayer:
                 frame.pack(fill="x", pady=2)
                 matches_found = True
 
-        # Update playlist placeholder visibility
         if not self.songFrames:  # If no songs at all
             self.placeholderLabel.configure(text="Your playlist is empty")
             self.placeholderLabel.pack(pady=20)
@@ -633,10 +618,10 @@ class MusicPlayer:
 
     def setVolume(self, volume):
         """Set the volume of the music player"""
-        self.volume = float(volume)  # Convert volume to float
+        self.volume = float(volume) 
         pygame.mixer.music.set_volume(self.volume)
         self.is_muted = False  # Unmute when volume is adjusted
-        self.volumeLabel.configure(image = self.volumeIcon)  # Ensure the volume icon is correct
+        self.volumeLabel.configure(image = self.volumeIcon)  
 
     def toggleMute(self):
         """Toggle mute state"""
@@ -692,4 +677,4 @@ class MusicPlayer:
 
 if __name__ == "__main__":
     player = MusicPlayer()
-    player.run()
+    player.run() 

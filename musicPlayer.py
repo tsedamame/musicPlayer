@@ -510,6 +510,7 @@ class MusicPlayer:
         minutes = int(seconds // 60)
         seconds = int(seconds % 60)
         return f"{minutes}:{seconds:02d}"
+    
     def selectSong(self):
         """Select a song and add it to the playlist"""
         songPath = filedialog.askopenfilename(

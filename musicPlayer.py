@@ -9,8 +9,8 @@ import random
 from PIL import Image
 import re
 from customtkinter import CTkImage
-import requests
-from bs4 import BeautifulSoup
+from LyricsFetcher import LyricsFetcher
+
 
 class MusicPlayer:
     def __init__(self):
@@ -122,7 +122,7 @@ class MusicPlayer:
         self.titleLabel.pack(pady = 30)
         
         #Song button 
-        self.selectButton = ctk.CTkButton(
+        self.selectBtn = ctk.CTkButton(
             self.window,
             text = "+ Add Song",
             width = 100,
@@ -131,7 +131,7 @@ class MusicPlayer:
             corner_radius = 16,
             command = self.selectSong,
         )
-        self.selectButton.place(relx = 0.97, rely = 0.02, anchor = "ne")
+        self.selectBtn.place(relx = 0.97, rely = 0.02, anchor = "ne")
         
         #frame for the song info and progress
         self.songFrame = ctk.CTkFrame(self.mainContent, fg_color="transparent")
@@ -153,7 +153,7 @@ class MusicPlayer:
         self.navControls.grid_columnconfigure(6, weight=1)  
 
         # Shuffle button
-        self.shuffleButton = ctk.CTkButton(
+        self.shuffleBtn = ctk.CTkButton(
             self.navControls,
             text = "Shuffle Off",
             width = 80,
@@ -162,10 +162,10 @@ class MusicPlayer:
             command = self.toggleShuffle,
             fg_color = "gray"
         )
-        self.shuffleButton.grid(row = 0, column = 1, padx = 5)
+        self.shuffleBtn.grid(row = 0, column = 1, padx = 5)
 
         # Repeat button
-        self.repeatButton = ctk.CTkButton(
+        self.repeatBtn = ctk.CTkButton(
             self.navControls,
             text = "Repeat Off",
             width = 80,
@@ -174,7 +174,7 @@ class MusicPlayer:
             fg_color = "gray",
             command=self.toggleRepeat,
         )
-        self.repeatButton.grid(row = 0, column = 5, padx = 5)
+        self.repeatBtn.grid(row = 0, column = 5, padx = 5)
 
         # Previous button
         self.prevButton = ctk.CTkButton(
@@ -389,7 +389,7 @@ class MusicPlayer:
     def updatePlaceholder(self):
         """Update the visibility of the placeholder label."""
         if not self.playlist:  # If playlist is empty
-            self.placeholderLabel.pack(pady=20)  # Show the placeholder
+            self.placeholderLabel.pack(pady = 20)  # Show the placeholder
         else:
             self.placeholderLabel.pack_forget()  # Hide the placeholder
 
@@ -542,17 +542,17 @@ class MusicPlayer:
         """Toggle repeat mode"""
         self.repeat = not self.repeat
         if self.repeat:
-            self.repeatButton.configure(text = "Repeat On", fg_color = "#2FA571")
+            self.repeatBtn.configure(text = "Repeat On", fg_color = "#2FA571")
         else:
-            self.repeatButton.configure(text = "Repeat Off", fg_color = "gray")
+            self.repeatBtn.configure(text = "Repeat Off", fg_color = "gray")
 
     def toggleShuffle(self):
         """Toggle shuffle mode"""
         self.shuffle = not self.shuffle
         if self.shuffle:
-            self.shuffleButton.configure(text = "Shuffle On", fg_color = "#2FA571")
+            self.shuffleBtn.configure(text = "Shuffle On", fg_color = "#2FA571")
         else:
-            self.shuffleButton.configure(text = "Shuffle Off", fg_color = "gray")
+            self.shuffleBtn.configure(text = "Shuffle Off", fg_color = "gray")
 
     def playNext(self):
         """Play the next song or stop if playlist is finished"""
@@ -640,23 +640,11 @@ class MusicPlayer:
         
         self.is_muted = not self.is_muted  # Toggle mute state
 
-    def scrapeLyrics(self, songName, artistName=None):
-        """Scrape lyrics from a lyrics website."""
-        try:
-            search_query = f"{songName} lyrics"
-            search_url = f"https://www.google.com/search?q={search_query.replace(' ', '+')}"
-            headers = {"User-Agent": "Mozilla/5.0"}
+    def scrapeLyrics(self, song_name, artist_name=None):
+        """Fetch lyrics for the current song."""
+        lyrics = LyricsFetcher.fetch_lyrics(song_name, artist_name)
+        self.lyricsLabel.configure(text=lyrics) 
 
-            response = requests.get(search_url, headers=headers)
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Example: Find the lyrics div (adjust selectors for your target website)
-            lyrics_div = soup.find("div", class_="BNeawe tAd8D AP7Wnd")
-            if lyrics_div:
-                return lyrics_div.get_text()
-            return "Lyrics not found."
-        except Exception as e:
-            return f"Error scraping lyrics: {e}"
 
     def toggleLyrics(self):
        """Toggle the visibility of the lyrics frame."""
@@ -679,3 +667,8 @@ class MusicPlayer:
 if __name__ == "__main__":
     player = MusicPlayer()
     player.run() 
+
+
+
+
+    

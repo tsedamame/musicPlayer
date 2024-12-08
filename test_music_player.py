@@ -9,14 +9,11 @@ from musicPlayer import MusicPlayer
 class TestMusicPlayer(unittest.TestCase):
     def setUp(self):
         """Initialize the MusicPlayer instance for each test."""
-        # Initialize the tkinter root window
         self.root = tk.Tk()
-        self.root.withdraw()  # Hide the root window during testing
+        self.root.withdraw() 
 
-        # Initialize pygame mixer
         pygame.mixer.init()
 
-        # Create the MusicPlayer instance
         self.player = MusicPlayer()
         self.player.playlist = ["test_song_1.mp3", "test_song_2.mp3"]
         self.player.currentSongIndex = 0
@@ -60,7 +57,7 @@ class TestMusicPlayer(unittest.TestCase):
     @patch("customtkinter.CTkLabel")
     @unittest.skipIf(os.environ.get("DISPLAY") is None, "Skipping GUI tests in headless environment")
     def test_setVolume(self, mock_ctklabel):
-        """Test setting the volume."""
+        """Testing volume."""
         self.player.setVolume(0.5)
         self.assertEqual(pygame.mixer.music.get_volume(), 0.5)
 

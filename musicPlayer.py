@@ -585,7 +585,7 @@ class MusicPlayer:
             # Play the next song in order
             self.currentSongIndex += 1
 
-            # Stop if we've reached the end of the playlist
+            # Stop if reached the end of the playlist
             if self.currentSongIndex >= len(self.playlist):
                 pygame.mixer.music.stop()
                 self.currentSongLabel.configure(
